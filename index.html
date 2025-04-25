@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Latihan Kraepelin</title>
     <style>
         body {
@@ -83,12 +84,20 @@
         <h1 id="quiz-title">Tes Kraepelin</h1>
         <div class="menu" id="main-menu">
             <button onclick="showTimeSelect()">Start</button>
+            <button onclick="showHistory()">History</button>
         </div>
         <div id="time-select" style="display: none;">
             <p>Pilih Waktu:</p>
             <button onclick="startQuiz(30)">30 detik</button>
             <button onclick="startQuiz(60)">1 Menit</button>
             <button onclick="startQuiz(120)">2 Menit</button>
+        </div>
+        <div id="history-section" style="display:none;">
+            <h2>Riwayat Permainan</h2>
+            <canvas id="historyChart" width="400" height="200"></canvas>
+            <div id="history-list"></div>
+            <button onclick="clearHistory()">Hapus History</button>
+            <button onclick="backToMainMenu()">Kembali ke Menu</button>
         </div>
         <p class="timer" id="timer"></p>
         <p class="question" id="question" style="display: none;"></p>
@@ -179,6 +188,146 @@
                 <p>Jawaban Salah: ${incorrectCount}</p>
                 <button onclick="location.reload()">Kembali ke Menu</button>`;
         }
+        let historyData = JSON.parse(localStorage.getItem('kraepelinHistory')) || [];
+
+    function saveHistory(correct, incorrect) {
+        historyData.push({ correct, incorrect, date: new Date().toLocaleString() });
+        localStorage.setItem('kraepelinHistory', JSON.stringify(historyData));
+    }
+
+    function showHistory() {
+        const history = JSON.parse(localStorage.getItem("history")) || [];
+        let labels = [];
+        let correctData = [];
+        let incorrectData = [];
+    
+        let html = `<h1>History Permainan</h1>`;
+    
+        if (history.length === 0) {
+            html += `<p>Tidak ada history tersedia.</p>`;
+        } else {
+            html += `<canvas id="historyChart" width="400" height="200" style="margin-bottom: 20px;"></canvas>`;
+            html += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+    
+            history.forEach((item, index) => {
+                labels.push(`#${index + 1}`);
+                correctData.push(item.correct);
+                incorrectData.push(item.incorrect);
+    
+                html += `
+                    <div style="
+                        background: rgba(255, 255, 255, 0.2);
+                        border-radius: 10px;
+                        padding: 15px;
+                        text-align: left;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                        backdrop-filter: blur(5px);
+                    ">
+                        <p><strong>Waktu Main:</strong> ${item.date}</p>
+                        <p><strong>Jawaban Benar:</strong> ${item.correct}</p>
+                        <p><strong>Jawaban Salah:</strong> ${item.incorrect}</p>
+                    </div>`;
+            });
+    
+            html += `</div>`;
+        }
+    
+        html += `
+            <br>
+            <button onclick="clearHistory()">Hapus History</button>
+            <button onclick="location.reload()">Kembali ke Menu</button>
+        `;
+    
+        document.querySelector('.container').innerHTML = html;
+    
+        if (history.length > 0) {
+            renderChart(labels, correctData, incorrectData);
+        }
+    }
+    
+
+    function clearHistory() {
+        localStorage.removeItem("history");
+        alert("History berhasil dihapus.");
+        showHistory(); // Tampilkan ulang tampilan history kosong
+    }
+    function backToMainMenu() {
+        document.getElementById('history-section').style.display = 'none';
+        document.getElementById('main-menu').style.display = 'block';
+    }
+
+    // Update endQuiz function:
+    function endQuiz() {
+        clearInterval(timerInterval);
+    
+        const result = {
+            correct: correctCount,
+            incorrect: incorrectCount,
+            date: new Date().toLocaleString()
+        };
+    
+        let history = JSON.parse(localStorage.getItem("history")) || [];
+        history.push(result);
+        localStorage.setItem("history", JSON.stringify(history));
+    
+        const container = document.querySelector('.container');
+        container.innerHTML = `<h1>Quiz Selesai!</h1>
+            <p>Jawaban Benar: ${correctCount}</p>
+            <p>Jawaban Salah: ${incorrectCount}</p>
+            <button onclick="location.reload()">Kembali ke Menu</button>`;
+    }
+    
+    function checkAnswer() {
+        const userAnswerInput = document.getElementById('user-answer');
+        const userAnswerValue = userAnswerInput.value.trim();
+    
+        if (userAnswerValue === '') {
+            alert("Silakan isi jawaban terlebih dahulu!");
+            userAnswerInput.focus();
+            return;
+        }
+    
+        const userAnswer = parseInt(userAnswerValue);
+        const currentQuestion = questions[questionIndex];
+    
+        if (userAnswer === currentQuestion.correctAnswer) {
+            correctCount++;
+        } else {
+            incorrectCount++;
+        }
+    
+        questionIndex++;
+        displayQuestion();
+    }
+    function renderChart(labels, correctData, incorrectData) {
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Benar',
+                        data: correctData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    },
+                    {
+                        label: 'Salah',
+                        data: incorrectData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Grafik History Permainan' }
+                }
+            }
+        });
+    }
+    
     </script>
 </body>
 </html>
