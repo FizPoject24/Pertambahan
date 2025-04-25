@@ -1,317 +1,297 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>Latihan Pertambahan</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            text-align: center;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            margin: 0;
-            padding: 0;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            transition: background 0.3s ease;
-        }
-        .container {
-            max-width: 700px;
-            width: 100%;
-            margin: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-        }
-        .container:hover {
-            transform: scale(1.02);
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            color: #fffc;
-            font-weight: bold;
-        }
-        button {
-            padding: 12px 30px;
-            margin: 10px;
-            font-size: 1.1em;
-            color: white;
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.3s ease;
-            width: 100%;
-            max-width: 220px;
-        }
-        button:hover {
-            background: linear-gradient(to right, #ff4b2b, #ff416c);
-            transform: scale(1.05);
-        }
-        .timer, .question {
-            font-size: 1.6em;
-            font-weight: bold;
-            color: #fff;
-        }
-        input {
-            padding: 10px;
-            font-size: 1.2em;
-            border-radius: 10px;
-            border: none;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 200px;
-        }
-        footer {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #ccc;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Latihan Pertambahan</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      transition: background 0.3s ease;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      margin: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+    }
+    .container:hover {
+      transform: scale(1.02);
+    }
+    h1, h2 {
+      font-size: 2em;
+      color: #fffc;
+    }
+    button {
+      padding: 12px 30px;
+      margin: 10px;
+      font-size: 1.1em;
+      color: white;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+      width: 100%;
+      max-width: 220px;
+    }
+    button:hover {
+      background: linear-gradient(to right, #ff4b2b, #ff416c);
+      transform: scale(1.05);
+    }
+    .timer, .question {
+      font-size: 1.6em;
+      font-weight: bold;
+    }
+    input {
+      padding: 10px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      border: none;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 200px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: white;
+    }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid white;
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="quiz-title">Tes Pertambahan</h1>
-        <div class="menu" id="main-menu">
-            <button onclick="showTimeSelect()">Start</button>
-            <button onclick="showHistory()">History</button>
-        </div>
-        <div id="time-select" style="display: none;">
-            <p>Pilih Waktu:</p>
-            <button onclick="startQuiz(30)">30 detik</button>
-            <button onclick="startQuiz(60)">1 Menit</button>
-            <button onclick="startQuiz(120)">2 Menit</button>
-        </div>
-        <div id="history-section" style="display:none;">
-            <h2>Riwayat Permainan</h2>
-            <canvas id="historyChart" width="400" height="200"></canvas>
-            <div id="history-list"></div>
-            <button onclick="clearHistory()">Hapus History</button>
-            <button onclick="backToMainMenu()">Kembali ke Menu</button>
-        </div>
-        <p class="timer" id="timer"></p>
-        <p class="question" id="question" style="display: none;"></p>
-        <input type="number" id="user-answer" inputmode="numeric" pattern="[0-9]*" style="display:none;" placeholder="Tulis jawaban..." onkeydown="handleKey(event)" />
-        <audio id="correct-sound" src="Benar.mp3" preload="auto"></audio>
-        <audio id="incorrect-sound" src="Salah.mp3" preload="auto"></audio>
-        <footer><p>HAFIZH NUR WAHID 2025</p></footer>
+  <div class="container">
+    <h1 id="quiz-title">Tes Pertambahan</h1>
+    <div class="menu" id="main-menu">
+      <button onclick="showTimeSelect()">Start</button>
+      <button onclick="showHistory()">History</button>
     </div>
-    <script>
-        let timerInterval;
-        let questionIndex = 0;
-        let correctCount = 0;
-        let incorrectCount = 0;
-        const questions = [];
+    <div id="time-select" style="display: none;">
+      <p>Pilih Waktu:</p>
+      <button onclick="startQuiz(30)">30 detik</button>
+      <button onclick="startQuiz(60)">1 Menit</button>
+      <button onclick="startQuiz(120)">2 Menit</button>
+    </div>
+    <p class="timer" id="timer"></p>
+    <p class="question" id="question" style="display: none;"></p>
+    <input type="number" id="user-answer" inputmode="numeric" placeholder="Tulis jawaban..." style="display:none;" onkeydown="handleKey(event)" />
+    <audio id="correct-sound" src="Benar.mp3" preload="auto"></audio>
+    <audio id="incorrect-sound" src="Salah.mp3" preload="auto"></audio>
+    <footer><p>HAFIZH NUR WAHID 2025</p></footer>
+  </div>
 
-        for (let i = 0; i < 1000; i++) {
-            let num1 = Math.floor(Math.random() * 10);
-            let num2 = Math.floor(Math.random() * 10);
-        
-        questions.push({
-            num1: num1,
-            num2: num2,
-            correctAnswer: num1 + num2
-        });
+  <script>
+    let timerInterval;
+    let questionIndex = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let gameType = "Pertambahan";
+    const questions = [];
+    let questionLogs = [];
 
-            
+    for (let i = 0; i < 100; i++) {
+        let a = Math.floor(Math.random() * 10);
+        let b = Math.floor(Math.random() * 10);
+        questions.push({ num1: a, num2: b, correctAnswer: a + b });
+      }
+      
+    function showTimeSelect() {
+      document.getElementById('main-menu').style.display = 'none';
+      document.getElementById('time-select').style.display = 'block';
+    }
+
+    function startQuiz(timeLimit) {
+      questionIndex = 0;
+      correctCount = 0;
+      incorrectCount = 0;
+      questionLogs = [];
+
+      document.getElementById('time-select').style.display = 'none';
+      document.getElementById('quiz-title').style.display = 'none';
+      document.getElementById('timer').innerText = `Waktu: ${timeLimit} Detik`;
+      document.getElementById('timer').style.display = 'block';
+      document.getElementById('question').style.display = 'block';
+      document.getElementById('user-answer').style.display = 'inline';
+
+      timerInterval = setInterval(() => {
+        timeLimit--;
+        document.getElementById('timer').innerText = `Waktu: ${timeLimit} Detik`;
+        if (timeLimit <= 0) {
+          clearInterval(timerInterval);
+          endQuiz();
         }
-        
+      }, 1000);
 
-        function showTimeSelect() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('time-select').style.display = 'block';
+      displayQuestion();
+    }
+
+    function displayQuestion() {
+      if (questionIndex >= questions.length) return endQuiz();
+      const current = questions[questionIndex];
+      document.getElementById('question').innerText = `Berapa ${current.num1} + ${current.num2}?`;
+      document.getElementById('user-answer').value = '';
+      document.getElementById('user-answer').focus();
+    }
+
+    function handleKey(event) {
+      if (event.key === 'Enter') checkAnswer();
+    }
+
+    function checkAnswer() {
+      const input = document.getElementById('user-answer');
+      const value = input.value.trim();
+      if (value === '') return alert("Silakan isi jawaban terlebih dahulu!");
+
+      const userAnswer = parseInt(value);
+      const current = questions[questionIndex];
+      const correct = userAnswer === current.correctAnswer;
+
+      if (correct) {
+        correctCount++;
+        document.body.style.backgroundColor = "#28a745";
+        document.getElementById('correct-sound').play();
+      } else {
+        incorrectCount++;
+        document.body.style.backgroundColor = "#dc3545";
+        document.getElementById('incorrect-sound').play();
+      }
+
+      questionLogs.push({
+        soal: `${current.num1} - ${current.num2}`,
+        jawabanPengguna: userAnswer,
+        jawabanBenar: current.correctAnswer,
+        status: correct ? "Benar" : "Salah"
+      });
+
+      setTimeout(() => {
+        document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
+      }, 500);
+
+      questionIndex++;
+      displayQuestion();
+    }
+
+    function endQuiz() {
+      clearInterval(timerInterval);
+      const result = {
+        correct: correctCount,
+        incorrect: incorrectCount,
+        date: new Date().toLocaleString(),
+        type: gameType,
+        logs: questionLogs
+      };
+      const history = JSON.parse(localStorage.getItem("history")) || [];
+      history.push(result);
+      localStorage.setItem("history", JSON.stringify(history));
+      document.querySelector('.container').innerHTML = `
+        <h1>Quiz Selesai!</h1>
+        <p>Jawaban Benar: ${correctCount}</p>
+        <p>Jawaban Salah: ${incorrectCount}</p>
+        <button onclick="location.reload()">Kembali ke Menu</button>`;
+    }
+
+    function showHistory() {
+      const history = JSON.parse(localStorage.getItem("history")) || [];
+      if (history.length === 0) {
+        document.querySelector('.container').innerHTML = `<h2>Tidak ada history.</h2><button onclick="location.reload()">Kembali</button>`;
+        return;
+      }
+
+      let html = `<h2>Riwayat Permainan</h2><canvas id="historyChart" height="150"></canvas><div>`;
+      const labels = [], correctData = [], incorrectData = [];
+
+      history.forEach((item, index) => {
+        labels.push(`#${index + 1}`);
+        correctData.push(item.correct);
+        incorrectData.push(item.incorrect);
+        html += `
+          <div style="background: rgba(255,255,255,0.2); margin-top: 15px; padding: 10px; border-radius: 10px;">
+            <p><strong>Jenis Permainan:</strong> ${item.type}</p>
+            <p><strong>Tanggal:</strong> ${item.date}</p>
+            <p>Benar: ${item.correct}, Salah: ${item.incorrect}</p>
+            <button onclick="showReport(${index})">Lihat Laporan</button>
+          </div>`;
+      });
+
+      html += `<br><button onclick="clearHistory()">Hapus Semua</button><button onclick="location.reload()">Kembali</button></div>`;
+      document.querySelector('.container').innerHTML = html;
+      renderChart(labels, correctData, incorrectData);
+    }
+
+    function showReport(index) {
+      const history = JSON.parse(localStorage.getItem("history")) || [];
+      const item = history[index];
+
+      let html = `<h2>Laporan Permainan</h2>
+        <p><strong>Jenis Permainan:</strong> ${item.type}</p>
+        <p><strong>Tanggal:</strong> ${item.date}</p>
+        <table>
+          <thead><tr><th>Soal</th><th>Jawaban Anda</th><th>Kunci</th><th>Status</th></tr></thead><tbody>`;
+
+      item.logs.forEach(log => {
+        html += `<tr>
+          <td>${log.soal}</td>
+          <td>${log.jawabanPengguna}</td>
+          <td>${log.jawabanBenar}</td>
+          <td>${log.status}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table><br><button onclick="showHistory()">Kembali</button>`;
+      document.querySelector('.container').innerHTML = html;
+    }
+
+    function clearHistory() {
+      localStorage.removeItem("history");
+      alert("History dihapus.");
+      showHistory();
+    }
+
+    function renderChart(labels, correctData, incorrectData) {
+      const ctx = document.getElementById('historyChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Benar', data: correctData, backgroundColor: 'rgba(75,192,192,0.7)' },
+            { label: 'Salah', data: incorrectData, backgroundColor: 'rgba(255,99,132,0.7)' }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Grafik History Permainan' }
+          }
         }
-
-        function startQuiz(timeLimit) {
-            questionIndex = 0;
-            correctCount = 0;
-            incorrectCount = 0;
-
-            document.getElementById('time-select').style.display = 'none';
-            document.getElementById('quiz-title').style.display = 'none';
-            document.getElementById('timer').innerText = `Waktu: ${timeLimit} Detik`;
-            document.getElementById('timer').style.display = 'block';
-            document.getElementById('question').style.display = 'block';
-            document.getElementById('user-answer').style.display = 'inline';
-
-            timerInterval = setInterval(() => {
-                timeLimit--;
-                document.getElementById('timer').innerText = `Waktu: ${timeLimit} Detik`;
-                if (timeLimit <= 0) {
-                    clearInterval(timerInterval);
-                    endQuiz();
-                }
-            }, 1000);
-
-            displayQuestion();
-        }
-
-        function displayQuestion() {
-            if (questionIndex >= questions.length) {
-                endQuiz();
-                return;
-            }
-            const currentQuestion = questions[questionIndex];
-            document.getElementById('question').innerText = `Berapa ${currentQuestion.num1} + ${currentQuestion.num2}?`;
-            document.getElementById('user-answer').value = '';
-            document.getElementById('user-answer').focus();
-        }
-
-        function handleKey(event) {
-            if (event.key === 'Enter') checkAnswer();
-        }
-
-        function checkAnswer() {
-            const userAnswerInput = document.getElementById('user-answer');
-            const userAnswerValue = userAnswerInput.value.trim();
-        
-            if (userAnswerValue === '') {
-                alert("Silakan isi jawaban terlebih dahulu!");
-                userAnswerInput.focus();
-                return;
-            }
-        
-            const userAnswer = parseInt(userAnswerValue);
-            const currentQuestion = questions[questionIndex];
-        
-            // Ubah warna latar belakang berdasarkan jawaban
-            if (userAnswer === currentQuestion.correctAnswer) {
-                correctCount++;
-                document.body.style.background = '#28a745'; // hijau
-            } else {
-                incorrectCount++;
-                document.body.style.background = '#dc3545'; // merah
-            }
-        
-            setTimeout(() => {
-                // Kembalikan background ke gradient semula
-                document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
-            }, 300); // efek warna selama 300ms
-        
-            questionIndex++;
-            displayQuestion();
-        }
-
-        function checkAnswer() {
-            const userAnswerInput = document.getElementById('user-answer');
-            const userAnswerValue = userAnswerInput.value.trim();
-        
-            if (userAnswerValue === '') {
-                alert("Silakan isi jawaban terlebih dahulu!");
-                userAnswerInput.focus();
-                return;
-            }
-        
-            const userAnswer = parseInt(userAnswerValue);
-            const currentQuestion = questions[questionIndex];
-        
-            if (userAnswer === currentQuestion.correctAnswer) {
-                correctCount++;
-                document.body.style.backgroundColor = "#28a745";  // Background hijau
-                document.getElementById('correct-sound').play();  // Suara benar
-            } else {
-                incorrectCount++;
-                document.body.style.backgroundColor = "#dc3545";  // Background merah
-                document.getElementById('incorrect-sound').play();  // Suara salah
-            }
-        
-            setTimeout(() => {
-                document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
-            }, 300); // reset warna background setelah 300ms
-        
-            questionIndex++;
-            displayQuestion();
-
-            setTimeout(() => {
-                document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
-            }, 300);
-            
-        }
-        
-        function endQuiz() {
-            clearInterval(timerInterval);
-            const result = {
-                correct: correctCount,
-                incorrect: incorrectCount,
-                date: new Date().toLocaleString()
-            };
-            let history = JSON.parse(localStorage.getItem("history")) || [];
-            history.push(result);
-            localStorage.setItem("history", JSON.stringify(history));
-            const container = document.querySelector('.container');
-            container.innerHTML = `<h1>Quiz Selesai!</h1>
-                <p>Jawaban Benar: ${correctCount}</p>
-                <p>Jawaban Salah: ${incorrectCount}</p>
-                <button onclick="location.reload()">Kembali ke Menu</button>`;
-        }
-
-        function showHistory() {
-            const history = JSON.parse(localStorage.getItem("history")) || [];
-            let labels = [];
-            let correctData = [];
-            let incorrectData = [];
-            let html = `<h1>History Permainan</h1>`;
-
-            if (history.length === 0) {
-                html += `<p>Tidak ada history tersedia.</p>`;
-            } else {
-                html += `<canvas id="historyChart" width="400" height="200" style="margin-bottom: 20px;"></canvas><div style="display: flex; flex-direction: column; gap: 10px;">`;
-                history.forEach((item, index) => {
-                    labels.push(`#${index + 1}`);
-                    correctData.push(item.correct);
-                    incorrectData.push(item.incorrect);
-                    html += `
-                        <div style="background: rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 15px; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.2); backdrop-filter: blur(5px);">
-                            <p><strong>Waktu Main:</strong> ${item.date}</p>
-                            <p><strong>Jawaban Benar:</strong> ${item.correct}</p>
-                            <p><strong>Jawaban Salah:</strong> ${item.incorrect}</p>
-                        </div>`;
-                });
-                html += `</div>`;
-            }
-
-            html += `<br><button onclick="clearHistory()">Hapus History</button><button onclick="location.reload()">Kembali ke Menu</button>`;
-            document.querySelector('.container').innerHTML = html;
-            if (history.length > 0) renderChart(labels, correctData, incorrectData);
-        }
-
-        function clearHistory() {
-            localStorage.removeItem("history");
-            alert("History berhasil dihapus.");
-            showHistory();
-        }
-
-        function renderChart(labels, correctData, incorrectData) {
-            const ctx = document.getElementById('historyChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Benar', data: correctData, backgroundColor: 'rgba(75, 192, 192, 0.7)' },
-                        { label: 'Salah', data: incorrectData, backgroundColor: 'rgba(255, 99, 132, 0.7)' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        title: { display: true, text: 'Grafik History Permainan' }
-                    }
-                }
-            });
-        }
-    </script>
+      });
+    }
+  </script>
 </body>
 </html>
