@@ -103,6 +103,8 @@
         <p class="timer" id="timer"></p>
         <p class="question" id="question" style="display: none;"></p>
         <input type="number" id="user-answer" inputmode="numeric" pattern="[0-9]*" style="display:none;" placeholder="Tulis jawaban..." onkeydown="handleKey(event)" />
+        <audio id="correct-sound" src="Benar.mp3" preload="auto"></audio>
+        <audio id="incorrect-sound" src="Salah.mp3" preload="auto"></audio>
         <footer><p>HAFIZH NUR WAHID 2025</p></footer>
     </div>
     <script>
@@ -116,11 +118,13 @@
             let num1 = Math.floor(Math.random() * 10);
             let num2 = Math.floor(Math.random() * 10);
         
-            questions.push({
-                num1: num1,
-                num2: num2,
-                correctAnswer: num1 + num2
-            });
+        questions.push({
+            num1: num1,
+            num2: num2,
+            correctAnswer: num1 + num2
+        });
+
+            
         }
         
 
@@ -159,7 +163,7 @@
                 return;
             }
             const currentQuestion = questions[questionIndex];
-            document.getElementById('question').innerText = `Berapa ${currentQuestion.num1} + ${currentQuestion.num2}?`;
+            document.getElementById('question').innerText = `Berapa ${currentQuestion.num1} ÷ ${currentQuestion.num2}?`;
             document.getElementById('user-answer').value = '';
             document.getElementById('user-answer').focus();
         }
@@ -171,32 +175,70 @@
         function checkAnswer() {
             const userAnswerInput = document.getElementById('user-answer');
             const userAnswerValue = userAnswerInput.value.trim();
-
+        
             if (userAnswerValue === '') {
                 alert("Silakan isi jawaban terlebih dahulu!");
                 userAnswerInput.focus();
                 return;
             }
-
+        
             const userAnswer = parseInt(userAnswerValue);
             const currentQuestion = questions[questionIndex];
-
+        
+            // Ubah warna latar belakang berdasarkan jawaban
             if (userAnswer === currentQuestion.correctAnswer) {
                 correctCount++;
-                document.body.style.background = '#28a745';
+                document.body.style.background = '#28a745'; // hijau
             } else {
                 incorrectCount++;
-                document.body.style.background = '#dc3545';
+                document.body.style.background = '#dc3545'; // merah
             }
-
+        
             setTimeout(() => {
+                // Kembalikan background ke gradient semula
                 document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
-            }, 300);
-
+            }, 300); // efek warna selama 300ms
+        
             questionIndex++;
             displayQuestion();
         }
 
+        function checkAnswer() {
+            const userAnswerInput = document.getElementById('user-answer');
+            const userAnswerValue = userAnswerInput.value.trim();
+        
+            if (userAnswerValue === '') {
+                alert("Silakan isi jawaban terlebih dahulu!");
+                userAnswerInput.focus();
+                return;
+            }
+        
+            const userAnswer = parseInt(userAnswerValue);
+            const currentQuestion = questions[questionIndex];
+        
+            if (userAnswer === currentQuestion.correctAnswer) {
+                correctCount++;
+                document.body.style.backgroundColor = "#28a745";  // Background hijau
+                document.getElementById('correct-sound').play();  // Suara benar
+            } else {
+                incorrectCount++;
+                document.body.style.backgroundColor = "#dc3545";  // Background merah
+                document.getElementById('incorrect-sound').play();  // Suara salah
+            }
+        
+            setTimeout(() => {
+                document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
+            }, 300); // reset warna background setelah 300ms
+        
+            questionIndex++;
+            displayQuestion();
+
+            setTimeout(() => {
+                document.body.style.background = 'linear-gradient(to right, #6a11cb, #2575fc)';
+            }, 300);
+            
+        }
+        
         function endQuiz() {
             clearInterval(timerInterval);
             const result = {
