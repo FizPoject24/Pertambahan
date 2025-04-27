@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <title>Latihan Pertambahan</title>
+  <link rel="manifest" href="/manifest.json" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -284,12 +285,25 @@
           ]
         },
         options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Grafik History Permainan' }
+          scales: {
+            x: { beginAtZero: true }
           }
         }
+      });
+    }
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/service-worker.js')
+          .then((registration) => {
+            console.log('Service Worker terdaftar dengan sukses:', registration);
+          })
+          .catch((error) => {
+            console.log('Pendaftaran Service Worker gagal:', error);
+          });
       });
     }
   </script>
